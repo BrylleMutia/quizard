@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "",
+    "sources": [
+        "QuestionCard.module.scss"
+    ],
+    "names": [],
+    "file": "QuestionCard.module.css"
+}
