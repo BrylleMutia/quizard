@@ -1,4 +1,4 @@
-export type Question = {
+export interface Question {
     category: string,
     difficulty: string,
     type: string,
