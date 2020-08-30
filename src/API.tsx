@@ -7,6 +7,8 @@ export interface Question {
     incorrect_answers: string[]
 }
 
+
+
 export type QuestionState = Question & { answers: string[] }
 
 export enum Difficulty {
