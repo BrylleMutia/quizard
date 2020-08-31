@@ -8,12 +8,12 @@ import { AnswerObject } from "./components/questionCard/QuestionCard";
 
 import { theme } from "./theme/theme";
 import { ThemeProvider } from "@material-ui/core/styles";
-import { Button, Typography } from "@material-ui/core";
+import { Button, Typography, InputLabel, Select, MenuItem } from "@material-ui/core";
 
 const App = (props: any) => {
-    // params for questions' difficulty and total numbers
-    const TOTAL_QUESTIONS = 10;
-    const DIFFICULTY = Difficulty.EASY;
+    // params for questions' difficulty and total numbers (api)
+    const [totalQuestions, setTotalQuestions] = useState(10);
+    const [difficulty, setDifficulty] = useState(Difficulty.EASY);
 
     const [loading, setLoading] = useState(false);
     const [questions, setQuestions] = useState<QuestionState[]>([]);
@@ -21,15 +21,13 @@ const App = (props: any) => {
     const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
     const [score, setScore] = useState(0);
     const [gameOver, setGameOver] = useState(true);
-    const [isFirstTry, setIsFirstTry] = useState(true);
     const [highscore, setHighscore] = useState(0);
 
     const startQuiz = async () => {
         setLoading(true);
         setGameOver(false);
-        setIsFirstTry(false);
 
-        const newQuestions = await fetchQuestions(TOTAL_QUESTIONS, DIFFICULTY);
+        const newQuestions = await fetchQuestions(totalQuestions, difficulty);
 
         // const newQuestions = [
         //     {
@@ -157,13 +155,17 @@ const App = (props: any) => {
         // move on to next question if not on last question
         const nextQuestion = number + 1;
 
-        if (nextQuestion === TOTAL_QUESTIONS) {
+        if (nextQuestion === totalQuestions) {
             setGameOver(true);
             if (score > highscore) setHighscore(score);
         } else {
             setNumber(nextQuestion);
         }
     };
+
+    const handleChangeDifficulty = (e: any) => setDifficulty(e.target.value);
+
+    const handleChangeTotalQuestions = (e: any) => setTotalQuestions(e.target.value);
 
     return (
         <React.StrictMode>
@@ -172,29 +174,76 @@ const App = (props: any) => {
                     <div className={classes.container}>
                         <h1>QUIZARD</h1>
 
-                        {isFirstTry || userAnswers.length === TOTAL_QUESTIONS ? (
+                        {gameOver ? (
                             <React.Fragment>
-                                {isFirstTry ? (
-                                    <Typography variant="h5" style={{ textAlign: "center" }}>
-                                        How far can your knowledge take you?
-                                    </Typography>
-                                ) : (
-                                    <Typography variant="h5" style={{ textAlign: "center" }}>
-                                        {score > highscore ? "NEW HIGHSCORE!" : "WELL DONE!"}
-                                    </Typography>
-                                )}
-                                <Button
-                                    {...props}
-                                    style={{ marginTop: "2em" }}
-                                    className={classes.start}
-                                    onClick={startQuiz}
-                                    size="medium"
-                                    variant="contained"
-                                    color="primary"
-                                >
-                                    {isFirstTry ? "START QUIZ" : "RETAKE QUIZ"}
-                                </Button>
+                                <Typography variant="h5" style={{ textAlign: "center" }}>
+                                    How far can your knowledge take you?
+                                </Typography>
+
+                                <form style={{ display: "flex", flexDirection: "column", marginTop: "2em" }}>
+                                    <InputLabel shrink={true} id="difficulty">
+                                        DIFFICULTY
+                                    </InputLabel>
+                                    <Select
+                                        labelId="difficulty"
+                                        id="select-difficulty"
+                                        defaultValue={difficulty}
+                                        value={difficulty}
+                                        onChange={handleChangeDifficulty}
+                                    >
+                                        <MenuItem value={Difficulty.EASY}>EASY</MenuItem>
+                                        <MenuItem value={Difficulty.MEDIUM}>MEDIUM</MenuItem>
+                                        <MenuItem value={Difficulty.HARD}>HARD</MenuItem>
+                                    </Select>
+                                    <InputLabel style={{ marginTop: "1em" }} shrink={true} id="total-questions">
+                                        NUMBER OF QUESTIONS
+                                    </InputLabel>
+                                    <Select
+                                        labelId="total-questions"
+                                        id="select-total-questions"
+                                        defaultValue={totalQuestions}
+                                        value={totalQuestions}
+                                        onChange={handleChangeTotalQuestions}
+                                    >
+                                        <MenuItem value={5}>5</MenuItem>
+                                        <MenuItem value={10}>10</MenuItem>
+                                        <MenuItem value={15}>15</MenuItem>
+                                        <MenuItem value={20}>20</MenuItem>
+                                        <MenuItem value={25}>25</MenuItem>
+                                        <MenuItem value={30}>30</MenuItem>
+                                        <MenuItem value={35}>35</MenuItem>
+                                        <MenuItem value={40}>40</MenuItem>
+                                        <MenuItem value={45}>45</MenuItem>
+                                        <MenuItem value={50}>50</MenuItem>
+                                    </Select>
+
+                                    <Button
+                                        style={{ marginTop: "2em" }}
+                                        className={classes.start}
+                                        onClick={startQuiz}
+                                        size="medium"
+                                        variant="contained"
+                                        color="primary"
+                                    >
+                                        START QUIZ
+                                    </Button>
+                                </form>
                             </React.Fragment>
+                        ) : null}
+
+                        {loading && (
+                            <React.Fragment>
+                                <Typography variant="h6" color="secondary" style={{ margin: "0.7em 0" }}>
+                                    Preparing questions...
+                                </Typography>
+                                <CircularProgress color="secondary" />
+                            </React.Fragment>
+                        )}
+
+                        {userAnswers.length === totalQuestions && !gameOver ? (
+                            <Typography variant="h5" color="secondary" style={{ textAlign: "center" }}>
+                                {score > highscore ? "NEW HIGHSCORE!" : "WELL DONE!"}
+                            </Typography>
                         ) : null}
 
                         {!gameOver && !loading ? (
@@ -203,19 +252,10 @@ const App = (props: any) => {
                             </Typography>
                         ) : null}
 
-                        {loading && (
-                            <React.Fragment>
-                                <Typography variant="h6" color="secondary" style={{ margin: "0.7em 0"}}>
-                                    Preparing questions...
-                                </Typography>
-                                <CircularProgress color="secondary" />
-                            </React.Fragment>
-                        )}
-
                         {!loading && !gameOver && (
                             <QuestionCard
                                 questionNum={number + 1}
-                                totalQuestions={TOTAL_QUESTIONS}
+                                totalQuestions={totalQuestions}
                                 question={questions[number].question}
                                 answers={questions[number].answers}
                                 userAnswer={userAnswers ? userAnswers[number] : undefined}
@@ -223,21 +263,19 @@ const App = (props: any) => {
                             />
                         )}
 
-                        <form>
-                            {!loading && !gameOver && userAnswers.length === number + 1 && number !== TOTAL_QUESTIONS - 1 ? (
-                                <Button
-                                    type="submit"
-                                    style={{ marginTop: "1em" }}
-                                    variant="contained"
-                                    size="large"
-                                    color="primary"
-                                    className={classes.next}
-                                    onClick={nextQuestion}
-                                >
-                                    Next Question
-                                </Button>
-                            ) : null}
-                        </form>
+                        {!loading && !gameOver && userAnswers.length === number + 1 ? (
+                            <Button
+                                type="submit"
+                                style={{ marginTop: "1em" }}
+                                variant="contained"
+                                size="large"
+                                color="primary"
+                                className={classes.next}
+                                onClick={nextQuestion}
+                            >
+                                {userAnswers.length === totalQuestions ? "RETAKE QUIZ" : "Next Question"}
+                            </Button>
+                        ) : null}
                     </div>
                 </div>
             </ThemeProvider>
