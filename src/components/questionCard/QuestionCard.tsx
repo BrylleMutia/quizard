@@ -18,7 +18,11 @@ export interface AnswerObject {
     correctAnswer: string;
 }
 
+
 const QuestionCard: React.FC<Props> = ({ question, answers, callback, userAnswer, questionNum, totalQuestions }) => {
+    // material ui media query for card component
+    const matches = useMediaQuery("(max-width: 420px)");
+    
     // styling for choice buttons
     // red = wrong / green = correct
     const answerResultStyle = (answer: string) => {
@@ -35,11 +39,8 @@ const QuestionCard: React.FC<Props> = ({ question, answers, callback, userAnswer
             };
     };
 
-    // material ui media query for card component
-    const matches = useMediaQuery("(max-width: 420px)");
-
     return (
-        <Card className={classes.question_card} style={matches ? { overflow: "scroll" } : undefined }>
+        <Card className={classes.question_card} style={matches ? { overflow: "scroll" } : undefined}>
             <CardContent>
                 <Typography className={classes.number}>
                     {questionNum} / {totalQuestions}
@@ -48,7 +49,7 @@ const QuestionCard: React.FC<Props> = ({ question, answers, callback, userAnswer
                     <p dangerouslySetInnerHTML={{ __html: question }} />
                 </Typography>
                 <CardActions
-                    style={matches ? { display: "flex", flexDirection: "column" } : undefined}
+                    style={matches ? { display: "flex", flexDirection: "column", alignItems: "center" } : undefined}
                 >
                     {answers.map((answer, index) => (
                         <div key={index} className={classes.buttons}>
