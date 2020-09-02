@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .app {
@@ -35,8 +35,9 @@ body {
 h1 {
   padding: 0.3em 3.5em;
   border-radius: 50px;
-  border: 3px solid #329D9C;
-  color: #329D9C;
+  border: 3px solid #329d9c;
+  color: #329d9c;
+  text-transform: uppercase;
 }
 
 @media (max-width: 420px) {

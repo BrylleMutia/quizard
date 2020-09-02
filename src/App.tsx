@@ -18,6 +18,7 @@ const useStyles = makeStyles({
     },
     typography: {
         textAlign: "center",
+        fontSize: "1.3rem"
     },
 });
 
