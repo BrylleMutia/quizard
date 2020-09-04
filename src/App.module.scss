@@ -32,6 +32,7 @@ h1 {
     border: 3px solid $tertiary;
     color: $tertiary;
     text-transform: uppercase;
+    font-size: calc(3vw + 1rem);
 }
 
 @media (max-width: 420px) {
